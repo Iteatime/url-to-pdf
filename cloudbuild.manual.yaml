@@ -1,0 +1,21 @@
+steps:
+- name: gcr.io/cloud-builders/git
+  args: ['fetch']
+- name: 'ubuntu'
+  args: ['bash', './set-key.sh']
+  env: ['KEY=${_APIKEY}']
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    "build",
+    "-t", "gcr.io/$PROJECT_ID/pdf-service:$COMMIT_SHA",
+    "-t", "gcr.io/$PROJECT_ID/pdf-service:latest",
+    "--cache-from", "gcr.io/$PROJECT_ID/pdf-service:latest",
+    "."
+    ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/$PROJECT_ID/pdf-service:latest"]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/$PROJECT_ID/pdf-service:$COMMIT_SHA"]
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy', '--no-promote', '--no-stop-previous-version']
+  timeout: '600s'

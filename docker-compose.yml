@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  pdf-service:
+    image: pdf-service
+    build: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8080:8080
