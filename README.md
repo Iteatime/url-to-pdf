@@ -50,3 +50,8 @@ The code pushed on this repo is continously deployed to [App Engine](https://clo
 `master` is the production branch. What you push there is built and sent live.
 
 Any other branch or pull request will be automatically deployed too. Check out [Google Cloud Build](https://cloud.google.com/cloud-build/docs/configuring-builds/build-test-deploy-artifacts#build_triggered_from_github) to learn more.
+
+## Manual deployment:
+
+You can deploy manualy this app using the [Cloud SDK](https://cloud.google.com/sdk/docs/quickstarts) by running this command:
+`gcloud builds submit --config cloudbuild.manual.yaml .`
