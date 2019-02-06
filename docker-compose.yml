@@ -1,8 +1,8 @@
 version: '2.1'
 
 services:
-  pdf-service:
-    image: pdf-service
+  url-to-pdf:
+    image: url-to-pdf
     build: .
     environment:
       NODE_ENV: production
