@@ -61,9 +61,9 @@ You can customize the pdf setting by using those query parms:
 * `name`: define the filename,
 * `format`: the document format,
 * `scale`: the scale to witch is rendered the page,
-* `marginTop`: the top margin,
-* `marginLeft`: the left marging,
-* `marginBottom`: the bottom margin,
-* `marginRight`: the right margin,
+* `margin.top`: the top margin,
+* `margin.left`: the left marging,
+* `margin.bottom`: the bottom margin,
+* `margin.right`: the right margin,
 
 They're discribed on the [Puppeteer API doc](https://github.com/GoogleChrome/puppeteer/blob/v1.12.2/docs/api.md#pagepdfoptions)
