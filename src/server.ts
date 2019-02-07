@@ -9,11 +9,6 @@ export class Server {
     this.app = Express.default();
     this.app.use((req: Express.Request, res: Express.Response) => {
       const url = req.query.url;
-
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
       this.checkRequest(url, req.query.api, res).then(() => {
         this.generatePDF(url, res);
       }).catch((error) => {
