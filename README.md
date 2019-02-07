@@ -7,7 +7,7 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 ## How To start:
 
 * Here you'll have two choices run on our docker environment or on your local one.
-* By default, it runs on `localhost:8080/?url=<page_url>&api=<api_key (optional)>`.
+* By default, it runs on `localhost:8080/?url=<page_url>[&api=<api_key>]`.
 
 ### 1 Local
 
@@ -20,14 +20,12 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 #### 1.2 Installation:
 
 * Here you have to clone this repo then you can run: `npm install`
-* Then you need to add your API key as `API_KEY` environment variable.
+* Then you can add your API key as `API_KEY` environment variable.
 
 #### 1.3 Dev server:
 
-* If you chosed to install `nodemon` you can run the watch via:
-    -`npm run dev`
-* Else you can start without the watch via:
-    -`npm start`
+* If you chosed to install `nodemon` you can run the watch via: `npm run dev`
+* Else you can start without the watch via: `npm start`
 
 ### 2 Docker
 
@@ -41,13 +39,13 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 
 #### 2.3 Dev server:    
 
-* You can start the watch by running the file: `docker.run.sh <api-key (optional)>`.   
+* You can start the watch by running the file: `docker.run.sh [api-key]`.   
 
 ## Continous deployment:
 
 The code pushed on this repo is continously deployed to [App Engine](https://cloud.google.com/appengine/docs/standard/nodejs/an-overview-of-app-engine).
 
-`master` is the production branch. What you push there is built and sent live.
+`master` is the production branch. What you push there is built and sent live [here](https://url-to-pdf.appspot.com).
 
 Any other branch or pull request will be automatically deployed too. Check out [Google Cloud Build](https://cloud.google.com/cloud-build/docs/configuring-builds/build-test-deploy-artifacts#build_triggered_from_github) to learn more.
 
