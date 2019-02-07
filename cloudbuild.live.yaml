@@ -1,9 +1,6 @@
 steps:
 - name: gcr.io/cloud-builders/git
   args: ['fetch']
-- name: 'ubuntu'
-  args: ['bash', './set-key.sh']
-  env: ['KEY=${_APIKEY}']
 - name: 'gcr.io/cloud-builders/docker'
   args: ["pull", "gcr.io/$PROJECT_ID/build/latest:latest"]
 - name: 'gcr.io/cloud-builders/docker'

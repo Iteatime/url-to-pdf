@@ -45,7 +45,7 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 
 The code pushed on this repo is continously deployed to [App Engine](https://cloud.google.com/appengine/docs/standard/nodejs/an-overview-of-app-engine).
 
-`master` is the production branch. What you push there is built and sent live [here](https://url-to-pdf.appspot.com).
+`master` is the production branch. What you push there is built and sent live [here](https://url-to-pdf.acrabadabra.com).
 
 Any other branch or pull request will be automatically deployed too. Check out [Google Cloud Build](https://cloud.google.com/cloud-build/docs/configuring-builds/build-test-deploy-artifacts#build_triggered_from_github) to learn more.
 
@@ -53,3 +53,17 @@ Any other branch or pull request will be automatically deployed too. Check out [
 
 You can deploy manualy this app using the [Cloud SDK](https://cloud.google.com/sdk/docs/quickstarts) by running this command:
 `gcloud builds submit --config cloudbuild.manual.yaml .`
+
+## Params:
+
+You can customize the pdf setting by using those query parms:
+
+* `name`: define the filename,
+* `format`: the document format,
+* `scale`: the scale to witch is rendered the page,
+* `marginTop`: the top margin,
+* `marginLeft`: the left marging,
+* `marginBottom`: the bottom margin,
+* `marginRight`: the right margin,
+
+They're discribed on the [Puppeteer API doc](https://github.com/GoogleChrome/puppeteer/blob/v1.12.2/docs/api.md#pagepdfoptions)
