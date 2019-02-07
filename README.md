@@ -58,7 +58,7 @@ You can deploy manualy this app using the [Cloud SDK](https://cloud.google.com/s
 
 You can customize the pdf setting by using those query parms:
 
-* `name`: define the filename,
+* `title`: the document title,
 * `format`: the document format,
 * `scale`: the scale to witch is rendered the page,
 * `margin.top`: the top margin,
