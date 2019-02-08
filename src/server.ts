@@ -45,37 +45,17 @@ export class Server {
   }
 
   private readPDFParams(queyParams: any) {
-    Object.keys(queyParams).forEach(param => {
-      if (!this.pdfParams.margin) this.pdfParams.margin = {};
-      switch(param) {
-        case 'format':
-          this.pdfParams.format = queyParams.format;
-          break;
-        case 'scale':
-          this.pdfParams.scale = +queyParams.scale;
-          break;
-        case 'marginTop':
-          this.pdfParams.margin.top = queyParams.marginTop;
-          break;
-        case 'marginLeft':
-          this.pdfParams.margin.left = queyParams.marginLeft;
-          break;
-        case 'marginBottom':
-          this.pdfParams.margin.bottom = queyParams.marginBottom;
-          break;
-        case 'marginRight':
-          this.pdfParams.margin.right = queyParams.marginRight;
-          break;
-        case 'width':
-          this.pdfParams.width = queyParams.width;
-          break;
-        case 'height':
-          this.pdfParams.height = queyParams.height;
-          break;
-        case 'tilte':
-          this.pdfParams.title = queyParams.title;
-      }
-    });
+    this.pdfParams = { 
+        ...queyParams, 
+        scale: queyParams.scale ? +queyParams.scale : 1,
+        margin: {
+          top: queyParams["margin.top"],
+          left: queyParams["margin.left"],
+          bottom: queyParams["margin.bottom"],
+          right: queyParams["margin.right"],
+        },
+        landscape: queyParams.landscape === 'true'
+      };
   }
 
   private async generatePDF(url: string, res: Express.Response) {
