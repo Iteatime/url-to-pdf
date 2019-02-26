@@ -1,8 +1,8 @@
-import * as Express from "express";
+import * as Express from 'express';
 
 const puppeteer = require('puppeteer');
 
-export class Server {
+export class Service {
   public app: Express.Express;
   public pdfParams: any;
 
@@ -19,7 +19,7 @@ export class Server {
       }).catch((error) => {
         return error;
       });
-    })
+    });
   }
 
   public startServer() {
@@ -31,11 +31,11 @@ export class Server {
 
   private checkRequest(url: string, apiKey: string, res: Express.Response) {
     return new Promise((resolve, reject) => {
-      if (!url || (!!process.env.API_KEY && !apiKey)) {
+      if (!url || (!!process.env.PDF_API_KEY && !apiKey)) {
         reject(res.status(400).send({
           message: "Bad call",
         }));
-      } else if (!!process.env.API_KEY && apiKey != process.env.API_KEY) {
+      } else if (!!process.env.PDF_API_KEY && apiKey != process.env.PDF_API_KEY) {
         reject(res.status(401).send({
           message: "Bad API key",
         }));

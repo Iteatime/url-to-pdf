@@ -20,7 +20,7 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 #### 1.2 Installation:
 
 * Here you have to clone this repo then you can run: `npm install`
-* Then you can add your API key as `API_KEY` environment variable.
+* Then you can add your API key as `PDF_API_KEY` environment variable.
 
 #### 1.3 Dev server:
 
