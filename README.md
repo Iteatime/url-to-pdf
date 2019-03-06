@@ -7,7 +7,7 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 ## How To start:
 
 * Here you'll have two choices run on our docker environment or on your local one.
-* By default, it runs on `localhost:8080/?url=<page_url>[&api=<api_key>]`.
+* By default, it runs on `localhost:8080/?url=<page_url>`.
 
 ### 1 Local
 
@@ -20,7 +20,6 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 #### 1.2 Installation:
 
 * Here you have to clone this repo then you can run: `npm install`
-* Then you can add your API key as `PDF_API_KEY` environment variable.
 
 #### 1.3 Dev server:
 
@@ -39,7 +38,7 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 
 #### 2.3 Dev server:    
 
-* You can start the watch by running the file: `docker.run.sh [api-key]`.   
+* You can start the watch by running the file: `docker.run.sh`.   
 
 ## Continous deployment:
 
