@@ -3,19 +3,19 @@ import * as Express from 'express';
 const puppeteer = require('puppeteer');
 
 export class Service {
-  public app: Express.Express;
-  public pdfParams: any;
+  private _app: Express.Express;
+  private _pdfParams: any;
 
   constructor() {
-    this.app = Express.default();
+    this._app = Express.default();
 
-    this.pdfParams = {};
+    this._pdfParams = {};
 
-    this.app.use((req: Express.Request, res: Express.Response) => {
+    this._app.use((req: Express.Request, res: Express.Response) => {
       const url = req.query.url;
-      this.checkRequest(url, res).then(() => {
-        this.readPDFParams(req.query);
-        this.generatePDF(url, res);
+      this._checkRequest(url, res).then(() => {
+        this._readPDFParams(req.query);
+        this._generatePDF(url, res);
       }).catch((error) => {
         return error;
       });
@@ -23,25 +23,22 @@ export class Service {
   }
 
   public startServer() {
-    return this.app.listen(process.env.PORT || 8080, (err: any) => {
-      if (err) return console.error(err);
-      else if (process.env.NODE_ENV === 'development') return console.log("\x1b[35m\x1b[47m", "server ready", "\x1b[0m");
-    });
+    return this._app.listen(8080);
   }
 
-  private checkRequest(url: string, res: Express.Response) {
+  private _checkRequest(url: string, res: Express.Response) {
     return new Promise((resolve, reject) => {
       if (!url) {
-        reject(res.status(400).send({
-          message: "Bad call",
-        }));
+        reject(
+          res.status(400).send({ message: "Bad call" })
+        );
       }
       resolve();
     })
   }
 
-  private readPDFParams(queyParams: any) {
-    this.pdfParams = { 
+  private _readPDFParams(queyParams: any) {
+    this._pdfParams = { 
         ...queyParams, 
         scale: queyParams.scale ? +queyParams.scale : 1,
         margin: {
@@ -54,7 +51,7 @@ export class Service {
       };
   }
 
-  private async generatePDF(url: string, res: Express.Response) {
+  private async _generatePDF(url: string, res: Express.Response) {
     try {
       const browser = await puppeteer.launch({
           args: ['--no-sandbox']
@@ -63,21 +60,19 @@ export class Service {
       const page = await browser.newPage();
       await page.goto(url);
 
-      if (!this.pdfParams.title) this.pdfParams.title = await page.title();
+      if (!this._pdfParams.title) this._pdfParams.title = await page.title();
       
-      const pdf = await page.pdf(this.pdfParams);
+      const pdf = await page.pdf(this._pdfParams);
 
       browser.close();
 
       res.setHeader('Content-Description', 'File Transfer');
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename=' + this.pdfParams.title + '.pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename=' + this._pdfParams.title + '.pdf');
       res.send(pdf);
     } catch(err) {
-      res.status(500).send({
-        message: err.message,
-      });
-      console.log(err);
+      res.status(500).send({ message: err.message });
+      if (process.env.NODE_ENV === 'development') console.error(err);
     }
   }
 }
