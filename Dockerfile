@@ -16,13 +16,16 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
 
 WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
+RUN npm install --production --silent
 RUN npm install -g ts-node typescript nodemon
 COPY . .
+
 RUN npm run build
+COPY . .
+
 EXPOSE 8080
 
 # Run everything after as non-privileged user.
 USER pptruser
 
-CMD node dist/index.js
+ENTRYPOINT ts-node src/index.ts
