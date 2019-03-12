@@ -54,7 +54,8 @@ export class Service {
           bottom: queyParams["margin.bottom"],
           right: queyParams["margin.right"],
         },
-        landscape: queyParams.landscape === 'true'
+        landscape: queyParams.landscape === 'true',
+	printBackground: true	
       };
   }
 
