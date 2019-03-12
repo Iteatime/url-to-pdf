@@ -1,0 +1,1 @@
+lsof -ti tcp:8080 | xargs kill
