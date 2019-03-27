@@ -13,7 +13,7 @@ export class Server {
 
     this.app.use((req: Express.Request, res: Express.Response) => {
       const url = req.query.url;
-      this.checkRequest(url, req.query.api, res).then(() => {
+      this.checkRequest(url, res).then(() => {
         this.readPDFParams(req.query);
         this.generatePDF(url, res);
       }).catch((error) => {
@@ -29,15 +29,11 @@ export class Server {
     });
   }
 
-  private checkRequest(url: string, apiKey: string, res: Express.Response) {
+  private checkRequest(url: string, res: Express.Response) {
     return new Promise((resolve, reject) => {
-      if (!url || (!!process.env.API_KEY && !apiKey)) {
+      if (!url) {
         reject(res.status(400).send({
           message: "Bad call",
-        }));
-      } else if (!!process.env.API_KEY && apiKey != process.env.API_KEY) {
-        reject(res.status(401).send({
-          message: "Bad API key",
         }));
       }
       resolve();
