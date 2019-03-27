@@ -1,8 +1,9 @@
 import * as Express from "express";
+import { Server } from "http";
 
 const puppeteer = require('puppeteer');
 
-export class Server {
+export class Service {
   public app: Express.Express;
   public pdfParams: any;
 
@@ -22,7 +23,7 @@ export class Server {
     })
   }
 
-  public startServer() {
+  public startServer(): Server {
     return this.app.listen(process.env.PORT || 8080, (err: any) => {
       if (err) return console.error(err);
       else if (process.env.NODE_ENV === 'development') return console.log("\x1b[35m\x1b[47m", "server ready", "\x1b[0m");
