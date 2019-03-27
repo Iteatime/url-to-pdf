@@ -24,10 +24,7 @@ export class Service {
   }
 
   public startServer(): Server {
-    return this.app.listen(process.env.PORT || 8080, (err: any) => {
-      if (err) return console.error(err);
-      else if (process.env.NODE_ENV === 'development') return console.log("\x1b[35m\x1b[47m", "server ready", "\x1b[0m");
-    });
+    return this.app.listen(process.env.PORT || 8080);
   }
 
   private checkRequest(url: string, res: Express.Response) {
@@ -52,7 +49,7 @@ export class Service {
           right: queyParams["margin.right"],
         },
         landscape: queyParams.landscape === 'true',
-	printBackground: true
+	      printBackground: true
       };
   }
 
