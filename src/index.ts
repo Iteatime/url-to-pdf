@@ -1,4 +1,4 @@
-import { Server } from './server'
+import { Service } from './service'
 
-var server = new Server();
-server.startServer();
+const service = new Service();
+const server = service.startServer();
