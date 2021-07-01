@@ -16,7 +16,7 @@
     "@types/mustache": "^0.8.32",
     "@types/puppeteer": "^1.12.1",
     "express": "^4.16.4",
-    "puppeteer": "^1.12.1",
+    "puppeteer": "^1.13.0",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.1"
   },
