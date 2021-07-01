@@ -13,9 +13,10 @@ export class Server {
 
     this.app.use((req: Express.Request, res: Express.Response) => {
       const url = req.query.url;
+      const async = req.query.async;
       this.checkRequest(url, req.query.api, res).then(() => {
         this.readPDFParams(req.query);
-        this.generatePDF(url, res);
+        this.generatePDF(url, async, res);
       }).catch((error) => {
         return error;
       });
@@ -30,7 +31,7 @@ export class Server {
   }
 
   private checkRequest(url: string, apiKey: string, res: Express.Response) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!url || (!!process.env.API_KEY && !apiKey)) {
         reject(res.status(400).send({
           message: "Bad call",
@@ -59,14 +60,17 @@ export class Server {
       };
   }
 
-  private async generatePDF(url: string, res: Express.Response) {
+  private async generatePDF(url: string, async: boolean, res: Express.Response) {
     try {
       const browser = await puppeteer.launch({
           args: ['--no-sandbox']
         });
 
       const page = await browser.newPage();
-      await page.goto(url);
+
+      const params = async ? { waitUntil: 'networkidle0' } : {};
+
+      await page.goto(url, params);
 
       if (!this.pdfParams.title) this.pdfParams.title = await page.title();
       

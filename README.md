@@ -65,5 +65,6 @@ You can customize the pdf setting by using those query parms:
 * `margin.left`: the left marging,
 * `margin.bottom`: the bottom margin,
 * `margin.right`: the right margin,
+* `async`: set to true to wait page data's
 
 They're discribed on the [Puppeteer API doc](https://github.com/GoogleChrome/puppeteer/blob/v1.12.2/docs/api.md#pagepdfoptions)
