@@ -12,9 +12,10 @@ export class Server {
     this.pdfParams = {};
 
     this.app.use((req: Express.Request, res: Express.Response) => {
-      const url = req.query.url;
-      const async = req.query.async;
-      this.checkRequest(url, req.query.api, res).then(() => {
+      const url = req.query.url as string;
+      const async = !!req.query.async;
+
+      this.checkRequest(url, req.query.api as string, res).then(() => {
         this.readPDFParams(req.query);
         this.generatePDF(url, async, res);
       }).catch((error) => {
@@ -24,9 +25,8 @@ export class Server {
   }
 
   public startServer() {
-    return this.app.listen(process.env.PORT || 8080, (err: any) => {
-      if (err) return console.error(err);
-      else if (process.env.NODE_ENV === 'development') return console.log("\x1b[35m\x1b[47m", "server ready", "\x1b[0m");
+    return this.app.listen(process.env.PORT || 8080, () => {
+      console.log("\x1b[35m\x1b[47m", "server ready", "\x1b[0m");
     });
   }
 
@@ -46,8 +46,8 @@ export class Server {
   }
 
   private readPDFParams(queyParams: any) {
-    this.pdfParams = { 
-        ...queyParams, 
+    this.pdfParams = {
+        ...queyParams,
         scale: queyParams.scale ? +queyParams.scale : 1,
         margin: {
           top: queyParams["margin.top"],
@@ -73,7 +73,7 @@ export class Server {
       await page.goto(url, params);
 
       if (!this.pdfParams.title) this.pdfParams.title = await page.title();
-      
+
       const pdf = await page.pdf(this.pdfParams);
 
       browser.close();
