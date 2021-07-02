@@ -24,4 +24,3 @@ node_modules/
 # outher
 .vscode
 .DS_Store
-dist
