@@ -5,19 +5,22 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {GENERATE_PDF_NAME} from "./constants";
 import Bull from "bull";
+import config from "./config";
+import {AppProcessor} from "./app.processor";
 
 @Module({
   imports: [
-    BullModule.registerQueueAsync({
-      name: GENERATE_PDF_NAME,
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        redis: configService.get<Bull.QueueOptions['redis']>('redis'),
+      ConfigModule.forRoot({load: [config], isGlobal: true}),
+      BullModule.registerQueueAsync({
+        name: GENERATE_PDF_NAME,
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          redis: configService.get<Bull.QueueOptions['redis']>('redis'),
+        }),
+        inject: [ConfigService],
       }),
-      inject: [ConfigService],
-    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppProcessor],
 })
 export class AppModule {}

@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {InjectQueue} from "@nestjs/bull";
-import {Queue} from "bull";
+import {Job, JobId, Queue} from "bull";
 import {GENERATE_PDF_NAME} from "./constants";
 import {Params, PdfParams} from "./type";
+import {ConfigService} from "@nestjs/config";
+import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 
 @Injectable()
 export class AppService {
-  constructor(@InjectQueue(GENERATE_PDF_NAME) private generatePdfQueue: Queue) {}
+  constructor(@InjectQueue(GENERATE_PDF_NAME) private generatePdfQueue: Queue, private configService: ConfigService) {}
 
   private static readPDFParams(params: any):PdfParams {
     return {
@@ -25,23 +27,47 @@ export class AppService {
     };
   }
 
-  async generatePdf({url, waitUntil, ...params}: Params): Promise<{fileName: string, pdf: any}> {
+  async createJob(params: Params): Promise<Job> {
+    return this.generatePdfQueue.add(params);
+  }
+
+  async getJob(id: JobId): Promise<Job> {
+    return this.generatePdfQueue.getJob(id);
+  }
+
+  async generatePdf({url, waitUntil, ...params}: Params): Promise<string> {
     const puppeteer = require('puppeteer');
     const pdfParams = AppService.readPDFParams(params);
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none']
+    });
 
-      const browser = await puppeteer.launch({
-        args: ['--no-sandbox']
-      });
+    const page = await browser.newPage();
+    await page.goto(url, {waitUntil: waitUntil});
+    await page.evaluateHandle('document.fonts.ready');
 
-      const page = await browser.newPage();
+    if (!pdfParams.title) pdfParams.title = await page.title();
 
-      await page.goto(url, waitUntil);
+    const pdf = await page.pdf(pdfParams);
+    browser.close().then();
+    return this.uploadPdf(pdfParams.title + '.pdf', pdf)
+  }
 
-      if (!pdfParams.title) pdfParams.title = await page.title();
+  async uploadPdf(fileName: string, pdf: any) {
+    const id = Date.now();
+    const client = new S3Client({
+      region: this.configService.get('aws.s3.region'),
+      credentials: {
+        accessKeyId: this.configService.get('aws.accessKeyId'),
+        secretAccessKey: this.configService.get('aws.secretAccessKey'),
+      }});
 
-      const pdf = await page.pdf(pdfParams);
-
-      browser.close().then();
-      return {fileName: pdfParams.title + '.pdf', pdf}
+    await client.send(new PutObjectCommand({
+      Bucket: this.configService.get('aws.s3.bucketName'),
+      Key: `${id}/${fileName}`,
+      Body: pdf,
+      ACL: "public-read"
+    }));
+    return `${this.configService.get('aws.cloudfront.uri')}/${id}/${fileName}`
   }
 }

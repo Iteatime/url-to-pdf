@@ -1,27 +1,30 @@
-import { OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
+import {OnQueueCompleted, OnQueueFailed, Process, Processor} from '@nestjs/bull';
+import {Logger} from '@nestjs/common';
 import {GENERATE_PDF_NAME} from "./constants";
 import {AppService} from "./app.service";
-import {PdfParams} from "./type";
+import {Job} from "bull";
 
 
 @Processor(GENERATE_PDF_NAME)
-export class ImportProcessor {
-    private readonly logger = new Logger(ImportProcessor.name);
+export class AppProcessor {
+    private readonly logger = new Logger(AppProcessor.name);
 
     constructor(private readonly appService: AppService) {}
 
     @Process()
-    async process(): Promise<void> {
+    async process(job: Job): Promise<void> {
+        this.logger.verbose(`job started ${job.id}`);
+        job.data.downloadUrl = await this.appService.generatePdf(job.data);
     }
 
     @OnQueueCompleted()
-    async onCompleted(): Promise<void> {
-        this.logger.verbose(`PDF created`);
+    async onCompleted(job: Job): Promise<void> {
+        await job.moveToCompleted(job.data.downloadUrl, true);
+        this.logger.verbose(`PDF created ${job.id}`);
     }
 
     @OnQueueFailed()
-    onFailed(): void {
-        this.logger.error(`Error on PDF generating`);
+    onFailed(job: Job): void {
+        this.logger.error(`Error on PDF generating ${job.id}`);
     }
 }
