@@ -1,8 +1,8 @@
 import {
-  BadRequestException,
+  BadRequestException, Body,
   Controller,
   Get, NotFoundException,
-  Param,
+  Param, Post,
   Query,
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -12,12 +12,13 @@ import {Params} from "./type";
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  async getPdfFromUrl(@Query() params:Params) {
+  @Post()
+  async getPdfFromUrl(@Query() params:Params, @Body() body: any) {
     if (!params.url){
       throw new BadRequestException('No url query');
     }
-    return this.appService.createJob(params);
+
+    return this.appService.createJob({...params, body});
   }
 
   @Get(':id')

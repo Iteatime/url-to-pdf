@@ -43,7 +43,15 @@ export class AppService {
     });
 
     const page = await browser.newPage();
+
+    await page.goto(url);
+
+    await page.evaluate(params => {
+      sessionStorage.setItem('body', JSON.stringify(params.body));
+    }, params);
+
     await page.goto(url, {waitUntil: waitUntil});
+
     await page.evaluateHandle('document.fonts.ready');
 
     if (!pdfParams.title) pdfParams.title = await page.title();
