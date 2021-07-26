@@ -39,11 +39,20 @@ export class AppService {
     const puppeteer = require('puppeteer');
     const pdfParams = AppService.readPDFParams(params);
     const browser = await puppeteer.launch({
+      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none']
     });
 
     const page = await browser.newPage();
+
+    await page.goto(url);
+
+    await page.evaluate(params => {
+      sessionStorage.setItem('body', JSON.stringify(params.body));
+    }, params);
+
     await page.goto(url, {waitUntil: waitUntil});
+
     await page.evaluateHandle('document.fonts.ready');
 
     if (!pdfParams.title) pdfParams.title = await page.title();
