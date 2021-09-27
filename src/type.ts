@@ -10,7 +10,7 @@ export type PdfParams = {
   height?: string;
   landscape?: boolean;
   printBackground?: boolean;
-  title?: boolean;
+  title?: string;
 };
 
 export type Params = {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Job, JobId, Queue } from 'bull';
+import { Browser, PuppeteerLifeCycleEvent } from 'puppeteer';
 import { GENERATE_PDF_NAME } from './constants';
 import { Params, PdfParams } from './type';
 import { ConfigService } from '@nestjs/config';
@@ -30,6 +31,18 @@ export class AppService {
     };
   }
 
+  private static async getBrowser(): Promise<Browser> {
+    const puppeteer = require('puppeteer');
+    return puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--font-render-hinting=none',
+      ],
+    });
+  }
+
   async createJob(params: Params): Promise<Job> {
     return this.generatePdfQueue.add(params);
   }
@@ -38,34 +51,46 @@ export class AppService {
     return this.generatePdfQueue.getJob(id);
   }
 
-  async generatePdf({ url, waitUntil, ...params }: Params): Promise<string> {
-    const puppeteer = require('puppeteer');
+  async generateSimplePdf({url, ...params}: Params): Promise<Buffer> {
     const pdfParams = AppService.readPDFParams(params);
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--font-render-hinting=none',
-      ],
-    });
-
+    const browser = await AppService.getBrowser();
     const page = await browser.newPage();
 
     await page.goto(url);
 
-    await page.evaluate(params => {
-      sessionStorage.setItem('body', JSON.stringify(params.body));
-    }, params);
+    if (!pdfParams.title) pdfParams.title = await page.title();
 
-    await page.goto(url, { waitUntil: waitUntil });
+    const pdf = await page.pdf(pdfParams);
+    await browser.close();
+
+    return pdf;
+  }
+
+  async generateComplexPdf({
+    url,
+    waitUntil,
+    body,
+    ...params
+  }: Params): Promise<string> {
+    const pdfParams = AppService.readPDFParams(params);
+    const browser = await AppService.getBrowser();
+    const page = await browser.newPage();
+
+    await page.goto(url);
+
+    await page.evaluate(content => {
+      sessionStorage.setItem('body', JSON.stringify(content));
+    }, body);
+
+    await page.goto(url, { waitUntil: waitUntil as PuppeteerLifeCycleEvent });
 
     await page.evaluateHandle('document.fonts.ready');
 
     if (!pdfParams.title) pdfParams.title = await page.title();
 
     const pdf = await page.pdf(pdfParams);
-    browser.close().then();
+    await browser.close();
+
     return this.uploadPdf(pdfParams.title + '.pdf', pdf);
   }
 

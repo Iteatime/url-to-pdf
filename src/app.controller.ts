@@ -7,7 +7,10 @@ import {
   Param,
   Post,
   Query,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { Params } from './type';
 
@@ -15,8 +18,22 @@ import { Params } from './type';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Get()
+  async getSimplePdfFromUrl(@Res() response: Response, @Req() request: Request) {
+    if (!request.query.url) {
+      throw new BadRequestException('No url query');
+    }
+
+    const document = await this.appService.generateSimplePdf(request.query as unknown as Params);
+
+    response.setHeader('Content-Description', 'File Transfer');
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader('Content-Disposition', `attachment; filename=${request.query.title || 'document'}.pdf`);
+    response.send(document);
+  }
+
   @Post()
-  async getPdfFromUrl(@Query() params: Params, @Body() body: any) {
+  async getComplexPdfFromUrl(@Query() params: Params, @Body() body: any) {
     if (!params.url) {
       throw new BadRequestException('No url query');
     }

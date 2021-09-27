@@ -18,7 +18,7 @@ export class AppProcessor {
   @Process()
   async process(job: Job): Promise<void> {
     this.logger.verbose(`job started ${job.id}`);
-    job.data.downloadUrl = await this.appService.generatePdf(job.data);
+    job.data.downloadUrl = await this.appService.generateComplexPdf(job.data);
   }
 
   @OnQueueCompleted()
