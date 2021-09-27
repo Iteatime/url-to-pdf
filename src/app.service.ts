@@ -17,15 +17,15 @@ export class AppService {
     return {
       scale: +params.scale || 1,
       margin: {
-        top: params.margin?.top || 0,
-        left: params.margin?.left || 0,
-        bottom: params.margin?.bottom || 0,
-        right: params.margin?.right || 0,
+        top: params['margin.top'] || 0,
+        left: params['margin.left'] || 0,
+        bottom: params['margin.bottom'] || 0,
+        right: params['margin.right'] || 0,
       },
       width: params.width,
       height: params.height,
-      landscape: params.landscape || true,
-      printBackground: params.printBackground || true,
+      landscape: params.landscape === 'true',
+      printBackground: params.printBackground === 'true',
       title: params.title,
     };
   }
