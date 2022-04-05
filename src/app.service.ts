@@ -6,13 +6,14 @@ import { GENERATE_PDF_NAME } from './constants';
 import { Params, PdfParams } from './type';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { waitFor } from './utils';
 
 @Injectable()
 export class AppService {
   constructor(
     @InjectQueue(GENERATE_PDF_NAME) private generatePdfQueue: Queue,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   private static readPDFParams(params: any): PdfParams {
     return {
@@ -51,7 +52,7 @@ export class AppService {
     return this.generatePdfQueue.getJob(id);
   }
 
-  async generateSimplePdf({url, ...params}: Params): Promise<Buffer> {
+  async generateSimplePdf({ url, ...params }: Params): Promise<Buffer> {
     const pdfParams = AppService.readPDFParams(params);
     const browser = await AppService.getBrowser();
     const page = await browser.newPage();
@@ -70,6 +71,7 @@ export class AppService {
     url,
     waitUntil,
     body,
+    delay,
     ...params
   }: Params): Promise<string> {
     const pdfParams = AppService.readPDFParams(params);
@@ -87,6 +89,9 @@ export class AppService {
     await page.evaluateHandle('document.fonts.ready');
 
     if (!pdfParams.title) pdfParams.title = await page.title();
+
+    if (delay)
+      await waitFor(delay);
 
     const pdf = await page.pdf(pdfParams);
     await browser.close();

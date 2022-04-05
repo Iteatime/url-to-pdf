@@ -15,6 +15,7 @@ export type PdfParams = {
 
 export type Params = {
   waitUntil?: string;
+  delay?: number;
   url: string;
   body: any;
 } & PdfParams;
