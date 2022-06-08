@@ -13,7 +13,7 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer), check out [these
 
 #### 1.1 Requirements:
 
-* Node.js (at least version 8.x): [latest](https://nodejs.org/en/download/current/)
+* Node.js (at least version 14.x): [latest](https://nodejs.org/en/download/current/)
 * nodemon (optional): npm install -g nodemon
 * ts-node: npm install -g ts-node typescript
 
