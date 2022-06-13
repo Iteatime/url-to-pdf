@@ -29,6 +29,6 @@ export class AppProcessor {
 
   @OnQueueFailed()
   onFailed(job: Job): void {
-    this.logger.error(`Error on PDF generating ${job.id}`);
+    this.logger.error(`Error on PDF generating ${job.id}`, job.failedReason);
   }
 }
