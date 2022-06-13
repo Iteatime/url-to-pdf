@@ -33,7 +33,7 @@
     "bull": "^3.22.10",
     "express": "^4.17.1",
     "node-fetch": "2",
-    "puppeteer": "^13.5.2",
+    "puppeteer": "^14.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6"
