@@ -7,7 +7,6 @@ import { Params, PdfParams } from './type';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { waitFor } from './utils';
-import fetch from 'node-fetch';
 
 @Injectable()
 export class AppService {
@@ -79,66 +78,23 @@ export class AppService {
     const browser = await AppService.getBrowser();
     const page = await browser.newPage();
 
-    console.log('CWD', process.cwd());
     page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
     await page.goto(url);
-
-    await fetch('https://transfer.sh/goto.png', {
-      method: 'PUT',
-      body: await page.screenshot({ fullPage: true }),
-    })
-      .then(r => r.text())
-      .then(console.log);
 
     await page.evaluate(content => {
       sessionStorage.setItem('body', JSON.stringify(content));
     }, body);
 
-    await fetch('https://transfer.sh/localstorage.png', {
-      method: 'PUT',
-      body: await page.screenshot({ fullPage: true }),
-    })
-      .then(r => r.text())
-      .then(console.log);
-
     await page.goto(url, { waitUntil: waitUntil as PuppeteerLifeCycleEvent });
 
-    await fetch('https://transfer.sh/waituntil.png', {
-      method: 'PUT',
-      body: await page.screenshot({ fullPage: true }),
-    })
-      .then(r => r.text())
-      .then(console.log);
-
     await page.evaluateHandle('document.fonts.ready');
-
-    await fetch('https://transfer.sh/fonts.png', {
-      method: 'PUT',
-      body: await page.screenshot({ fullPage: true }),
-    })
-      .then(r => r.text())
-      .then(console.log);
 
     if (!pdfParams.title) pdfParams.title = await page.title();
 
     if (delay) await waitFor(delay);
 
-    await fetch('https://transfer.sh/delay.png', {
-      method: 'PUT',
-      body: await page.screenshot({ fullPage: true }),
-    })
-      .then(r => r.text())
-      .then(console.log);
-
     const pdf = await page.pdf(pdfParams);
-
-    await fetch('https://transfer.sh/pdf.png', {
-      method: 'PUT',
-      body: await page.screenshot({ fullPage: true }),
-    })
-      .then(r => r.text())
-      .then(console.log);
 
     await browser.close();
 
