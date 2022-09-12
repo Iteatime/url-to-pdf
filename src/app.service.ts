@@ -52,12 +52,18 @@ export class AppService {
     return this.generatePdfQueue.getJob(id);
   }
 
-  async generateSimplePdf({ url, ...params }: Params): Promise<Buffer> {
+  async generateSimplePdf({
+    url,
+    waitUntil,
+    ...params
+  }: Params): Promise<Buffer> {
     const pdfParams = AppService.readPDFParams(params);
     const browser = await AppService.getBrowser();
     const page = await browser.newPage();
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: waitUntil as PuppeteerLifeCycleEvent });
+
+    await page.evaluateHandle('document.fonts.ready');
 
     if (!pdfParams.title) pdfParams.title = await page.title();
 
