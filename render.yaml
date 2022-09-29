@@ -1,0 +1,57 @@
+services:
+  - type: web
+    env: node
+    name: url-to-pdf-prod
+    region: frankfurt
+    branch: master
+    buildCommand: "yarn; yarn build"
+    startCommand: yarn start:prod
+    plan: free
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: redis
+          property: connectionString
+      - fromGroup: aws
+      - key: AWS_CLOUDFRONT_URI
+        value: https://d2ribwdduvzd8s.cloudfront.net
+      - key: AWS_S3_BUCKET_NAME
+        value: iteatime.url-to-pdf.production
+  - type: web
+    env: node
+    name: url-to-pdf-staging
+    region: frankfurt
+    branch: staging
+    buildCommand: "yarn; yarn build"
+    startCommand: yarn start:prod
+    plan: free
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: redis
+          property: connectionString
+      - fromGroup: aws
+      - key: AWS_CLOUDFRONT_URI
+        value: https://d382f6gomjz6m7.cloudfront.net
+      - key: AWS_S3_BUCKET_NAME
+        value: iteatime.url-to-pdf.dev
+  - type: redis
+    name: redis_url-to-pdf
+    region: frankfurt
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    plan: free
+    maxmemoryPolicy: noeviction
+
+envVarGroups:
+  - name: aws
+    envVars:
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_S3_REGION
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false

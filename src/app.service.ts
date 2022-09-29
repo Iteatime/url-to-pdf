@@ -55,6 +55,7 @@ export class AppService {
   async generateSimplePdf({
     url,
     waitUntil,
+    delay,
     ...params
   }: Params): Promise<Buffer> {
     const pdfParams = AppService.readPDFParams(params);
@@ -66,6 +67,8 @@ export class AppService {
     await page.evaluateHandle('document.fonts.ready');
 
     if (!pdfParams.title) pdfParams.title = await page.title();
+
+    if (delay) await waitFor(delay * 1000);
 
     const pdf = await page.pdf(pdfParams);
     await browser.close();
